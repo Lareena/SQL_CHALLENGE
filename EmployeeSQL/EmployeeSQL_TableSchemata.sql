@@ -4,49 +4,61 @@
 
 
 CREATE TABLE titles (
-    title_id CHAR(5) NOT NULL PRIMARY KEY,
-    title VARCHAR(30)  NOT NULL
+    title_id VARCHAR(5) NOT NULL PRIMARY KEY,
+    title VARCHAR(50)  NOT NULL
 );
 
+SELECT * FROM titles
+
 CREATE TABLE employees (
-    emp_no INTEGER   NOT NULL PRIMARY KEY,
-	emp_title_id CHAR(5) NOT NULL,
+    emp_no INTEGER   NOT NULL,
+	emp_title_id VARCHAR(5) NOT NULL,
     birth_date DATE   NOT NULL,
-    first_name VARCHAR(30)   NOT NULL,
-    last_name VARCHAR(30)   NOT NULL,
+    first_name VARCHAR(50)   NOT NULL,
+    last_name VARCHAR(50)   NOT NULL,
     sex VARCHAR   NOT NULL,
     hire_date DATE   NOT NULL,
+	PRIMARY KEY (emp_no),
 	FOREIGN KEY (emp_title_id) REFERENCES titles(title_id)
 );
 
+SELECT * FROM employees
+
 CREATE TABLE salaries (
-    emp_no INTEGER   NOT NULL PRIMARY KEY,
+    emp_no INTEGER   NOT NULL,
     salary INTEGER   NOT NULL,
+	PRIMARY KEY (emp_no),
     FOREIGN KEY(emp_no) REFERENCES employees (emp_no)
 );
 
+SELECT * FROM salaries
+
 CREATE TABLE departments (
-    dept_no char(5)   NOT NULL PRIMARY KEY,
-    dept_name VARCHAR   NOT NULL
+    dept_no VARCHAR (4)   NOT NULL,
+    dept_name VARCHAR (50)  NOT NULL,
+	 PRIMARY KEY (dept_no)
 );
 
+SELECT * FROM departments
 
-CREATE TABLE "dept_emp" (
-    "emp_no" INTEGER   NOT NULL,
-    "dept_no" CHAR(5)   NOT NULL,
-    PRIMARY KEY ("emp_no","dept_no"),
-    FOREIGN KEY ("emp_no") REFERENCES "employees" ("emp_no")
+CREATE TABLE dept_emp (
+    emp_no INTEGER   NOT NULL,
+    dept_no VARCHAR(4)   NOT NULL,
+    PRIMARY KEY (emp_no,dept_no),
+    FOREIGN KEY (dept_no) REFERENCES departments (dept_no)
 );
 
+SELECT * FROM dept_emp
 
-CREATE TABLE "dept_manager" (
-    "dept_no" CHAR(5)   NOT NULL,
-    "emp_no" INTEGER   NOT NULL,
-    PRIMARY KEY ("dept_no","emp_no"),
-    FOREIGN KEY ("dept_no") REFERENCES "departments" ("dept_no"),
-    FOREIGN KEY ("emp_no") REFERENCES "employees" ("emp_no")
+CREATE TABLE dept_manager (
+    dept_no VARCHAR(4)   NOT NULL,
+    emp_no INTEGER   NOT NULL,
+    PRIMARY KEY (emp_no),
+    FOREIGN KEY (dept_no) REFERENCES departments (dept_no),
+    FOREIGN KEY (emp_no) REFERENCES employees (emp_no)
 );
 
+SELECT * FROM dept_manager
 
 
 -- List the following details of each employee: employee number, last name, first name, gender, and salary.
@@ -64,15 +76,14 @@ ORDER BY hire_date
 
 -- List the manager of each department with the following information: 
 -- department number, department name, the manager's employee number, 
--- last name, first name, and start and end employment dates.
+-- last name, first name
 SELECT d.dept_no "Department number", d.dept_name "Department Name", 
-e.emp_no "Employee Number", e.first_name "First Name", e.last_name "Last Name",
-de.from_date "Employment Start Date", de.to_date "Employment End Date"
+e.emp_no "Employee Number", e.first_name "First Name", e.last_name "Last Name"
 FROM employees e
 JOIN dept_manager dm ON (e.emp_no = dm.emp_no)
 JOIN dept_emp de ON (dm.emp_no = de.emp_no)
 JOIN departments d ON (dm.dept_no = d.dept_no)
-ORDER BY dm.to_date DESC
+ORDER BY dm
 
 --List the department of each employee with the following information:
 -- employee number, last name, first name, and department name.
